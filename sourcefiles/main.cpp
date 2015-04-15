@@ -12,6 +12,11 @@ int main(void)
 	cout << endl << endl << "@@@@@@@@@@@@@@@@@@@" << endl << endl;
 	A.transpuesta();
 	A.print_mat();
+
+	cout << endl << endl << "@@@@@@@@@@@@@@@@@@@" << endl << endl;
+
+	mat B = mat("identityMatrix",5,5);
+	B.print_mat();
 	
 	/*mat B = mat("mat2.csv");
 	B.print_mat();

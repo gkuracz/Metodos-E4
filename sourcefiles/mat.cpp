@@ -1,6 +1,9 @@
 #include<stdio.h>
+#include <iostream>
 #include"mat.h"
 #include"csv.h"
+
+using namespace std;
 
 mat::mat(int M, int N)
 {
@@ -18,17 +21,19 @@ mat::mat(int M, int N)
 }
 mat::mat(char*name)
 {
-	int lM, lN;
-	csvSize(name, lM, lN);
-	this->M = lM;
-	this->N = lN;
-	matrix = new long double*[M];
-	int i;
-	for (i = 0; i < M; i++)
-	{
-		matrix[i] = new long double[N];
-	}
-	csvRead(name, matrix, M, N);
+
+		int lM, lN;
+		csvSize(name, lM, lN);
+		this->M = lM;
+		this->N = lN;
+		matrix = new long double*[M];
+		int i;
+		for (i = 0; i < M; i++)
+		{
+			matrix[i] = new long double[N];
+		}
+
+		csvRead(name, matrix, M, N);	
 	
 }
 
@@ -40,6 +45,16 @@ mat::~mat()
 	for (int i = 0; i < M; ++i)
 		delete[] matrix[i];
 	delete[] matrix;
+}
+
+bool mat::isMatrixSquared(void)
+{
+	if (this->N == this->M)
+	{
+		return true;
+	}
+
+	return false;
 }
 
 void mat::print_mat(void)
@@ -133,4 +148,35 @@ void mat::swapRow(int row01, int row02)
 	auxRow = this->matrix[row01];
 	this->matrix[row01] = this->matrix[row02];
 	this->matrix[row02] = auxRow;
+}
+
+mat::mat(char * specificMatrix,int M,int N)
+{
+	this->M = M;
+	this->N = N;
+
+	this->matrix = new long double*[M];
+	int i;
+	for (i = 0; i < M; i++)
+	{
+		matrix[i] = new long double[N];
+	}
+
+	for (i = 0; i < M; i++)
+		for (int j = 0; j < N; j++)
+			matrix[i][j] = 0;
+
+	if (specificMatrix == "identityMatrix")
+	{
+		if (M == N)
+		{
+			for (i = 0; i < this->N; i++)
+			{
+				this->matrix[i][i] = 1;
+			}
+
+			cout << "identity matrix created" << endl;
+		}
+	}
+
 }
