@@ -39,6 +39,35 @@ mat::mat(char*name)
 	
 }
 
+mat::mat(char * specificMatrix,int M,int N)
+{
+	this->M = M;
+	this->N = N;
+
+	this->matrix = new long double*[M];
+	int i;
+	for (i = 0; i < M; i++)
+	{
+		matrix[i] = new long double[N];
+	}
+
+	for (i = 0; i < M; i++)
+		for (int j = 0; j < N; j++)
+			matrix[i][j] = 0;
+
+	if (specificMatrix == "identityMatrix")
+	{
+		if (M == N)
+		{
+			for (i = 0; i < this->N; i++)
+			{
+				this->matrix[i][i] = 1;
+			}
+		}
+	}
+
+}
+
 mat::~mat()
 {
 	fprintf(stderr, "%d%d", M, N);
@@ -204,34 +233,6 @@ void mat::swapRow(int row01, int row02)
 	this->matrix[row02] = auxRow;
 }
 
-mat::mat(char * specificMatrix,int M,int N)
-{
-	this->M = M;
-	this->N = N;
-
-	this->matrix = new long double*[M];
-	int i;
-	for (i = 0; i < M; i++)
-	{
-		matrix[i] = new long double[N];
-	}
-
-	for (i = 0; i < M; i++)
-		for (int j = 0; j < N; j++)
-			matrix[i][j] = 0;
-
-	if (specificMatrix == "identityMatrix")
-	{
-		if (M == N)
-		{
-			for (i = 0; i < this->N; i++)
-			{
-				this->matrix[i][i] = 1;
-			}
-		}
-	}
-
-}
 
 /*
 	Function that will create two matrix L and U necesary for the LUDecomposition algorithm.
