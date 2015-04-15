@@ -7,6 +7,8 @@ using namespace std;
 
 mat::mat(int M, int N)
 {
+	setVariablesToNull();
+
 	this->M = M;
 	this->N = N;
 	matrix = new long double*[M];
@@ -21,7 +23,7 @@ mat::mat(int M, int N)
 }
 mat::mat(char*name)
 {
-
+		setVariablesToNull();
 		int lM, lN;
 		csvSize(name, lM, lN);
 		this->M = lM;
@@ -47,6 +49,42 @@ mat::~mat()
 	delete[] matrix;
 }
 
+long double ** mat::newAuxMatrixSamesize(void)
+{
+	long double ** auxMatrix;
+
+	this->M = M;
+	this->N = N;
+	auxMatrix = new long double*[this->M];
+	int i, j;
+	for (i = 0; i < M; i++)
+	{
+		auxMatrix[i] = new long double[this->N];
+	}
+	for (i = 0; i < this->M; i++)
+	for (j = 0; j < this->N; j++)
+		auxMatrix[i][j] = 0;
+
+	return auxMatrix;
+}
+
+long double ** mat::newAuxIdentityMatrix(void)
+{
+	if (this->M == this->N)
+	{
+		long double ** auxMatrix = newAuxMatrixSamesize();
+
+		for (int i = 0; i < this->N; i++)
+		{
+			auxMatrix[i][i] = 1;
+		}
+
+		return auxMatrix;
+	}
+
+	return NULL;
+}
+
 bool mat::isMatrixSquared(void)
 {
 	if (this->N == this->M)
@@ -59,13 +97,29 @@ bool mat::isMatrixSquared(void)
 
 void mat::print_mat(void)
 {
+	print_thisMatrix(this->matrix, this->M, this->N);
+}
 
+void mat::print_mat_L(void)
+{
+	if (this->matrixL != NULL)
+		print_thisMatrix(this->matrixL, this->M, this->N);
+}
+
+void mat::print_mat_U(void)
+{
+	if (this->matrixU != NULL)
+		print_thisMatrix(this->matrixU, this->M, this->N);
+}
+
+void mat::print_thisMatrix(long double** thisMatrix, int M, int N)
+{
 	int i, j;
 	for (i = 0; i < M; i++)
 	{
 		for (j = 0; j < N; j++)
 		{
-			fprintf(stderr, "%f\t", matrix[i][j]);
+			fprintf(stderr, "%f\t", thisMatrix[i][j]);
 		}
 		fprintf(stderr, "\n");
 	}
@@ -174,9 +228,58 @@ mat::mat(char * specificMatrix,int M,int N)
 			{
 				this->matrix[i][i] = 1;
 			}
-
-			cout << "identity matrix created" << endl;
 		}
 	}
 
+}
+
+/*
+	Function that will create two matrix L and U necesary for the LUDecomposition algorithm.
+*/
+void mat::LUdecomposition(void)
+{
+	if (isMatrixSquared())
+	{
+		if ((this->matrixL == NULL) && (this->matrixU == NULL))
+		{
+			createLUDecompMatrix(); // Craetes too necesary matrix for LUDecomposition, same size as the original.
+
+			int i, j,k;
+			double sum;
+
+			for (j = 0; j < this->N; j++) 
+			{
+
+				// Solving upper matrix
+				for (i = 0; i <= j; i++) 
+				{
+					sum = 0.0;
+					for (k = 0; k < i; k++) 
+					{
+						sum += matrixU[k][j] * matrixL[i][k];
+					}
+
+					matrixU[i][j] = matrix[i][j] - sum;
+				}
+
+				// Solving lower Matrix
+				for (i = j + 1; i < this->N; i++)
+				{
+					sum = 0.0;
+					for (k = 0; k < j; k++)
+					{
+						sum += matrixU[k][j] * matrixL[i][k];
+					}
+
+					matrixL[i][j] = (1.0 / matrixU[j][j]) * (matrix[i][j] - sum);
+				}
+			}
+		}
+	}
+}
+
+void mat::createLUDecompMatrix(void)
+{
+	this->matrixL = newAuxIdentityMatrix(); //Create lower Matrix with identity diagonal
+	this->matrixU = newAuxMatrixSamesize(); //Create upperMatrix
 }
