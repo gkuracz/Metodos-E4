@@ -70,9 +70,6 @@ mat::mat(char * specificMatrix,int M,int N)
 
 mat::~mat()
 {
-	fprintf(stderr, "%d%d", M, N);
-	fprintf(stderr, "\n", M, N);;
-	;
 	for (int i = 0; i < M; ++i)
 		delete[] matrix[i];
 	delete[] matrix;
@@ -198,6 +195,84 @@ void mat::transpuesta(void)
 	transposeSetThisNewMatrix(newMatrix);
 }
 
+int mat::mat_det(void)
+{
+	int i;
+	long double dl=1, du=1;
+	if (M != N)
+	{
+		fprintf(stderr, "Error, the matrix must be square");
+		return 0;
+	}
+	LUdecomposition();
+	//print_mat_L();
+	//print_mat_U();
+	for (i = 0; i < N; i++)
+	{
+		dl =dl*matrixL[i][i];
+		du =du*matrixU[i][i];
+	}
+	//fprintf(stderr, "DEBUG  det(A)=%f\n", dl*du);
+	return dl*du;
+
+
+}
+void mat::mat_inv(void)
+{
+	int i,j,k;
+	long double t;
+	j = 0;
+	if (mat_det())
+	{
+		long double **temp = newAuxMatrixSamesize();
+		for (i = 0; i < N*M; i++)
+			temp[i]=matrix[i];
+		inv = newAuxIdentityMatrix();
+		for (i = 0; i < N; i++)
+		{
+			if (i < N - 1)
+			{
+				while (temp[i][i] == 0)
+				{
+					swapRow(temp,i, i + 1);
+					swapRow(temp,i + 1, N);
+					swapRow(inv, i, i + 1);
+					swapRow(inv, i + 1, N);
+					
+				}
+			}
+			for (j = 0, t = temp[i][i]; j < M; j++)
+			{
+				
+					inv[i][j] = inv[i][j] /t;
+					temp[i][j] = temp[i][j] /t;
+			}
+			if (i < N-1 )
+			{
+				for (k = i + 1; k < N; k++)
+				{
+					for (j = 0,t=temp[k][i]; j < M; j++)
+					{
+
+						inv[k][j] = inv[k][j] - inv[i][j] * t;
+						temp[k][j] = temp[k][j] - temp[i][j] * t;
+					}
+				}
+			}
+		}
+		for (k = 3; k > 0; k--){
+			for (i = 3 - k,t=temp[N - 2 - i][k]; i < N - 1; i++)
+			{
+				for (j = 0; j < N;j++)
+				inv[N - i - 2][j] = inv[N - 2 - i][j] - inv[k][j] * temp[N - 2 - i][k];
+				temp[N - i - 2][k] = temp[N - 2 - i][k] - temp[k][k] * temp[N - 2 - i][k];
+				
+			}
+		}
+
+	}
+}
+
 void mat::transpuestaCopyRowToColumn(long double** newMatrix, long double * rowToCopy, int rowNumber)
 {
 	int i;
@@ -225,12 +300,12 @@ void mat::transposeSetThisNewMatrix(long double** newMatrix)
 	this->matrix = newMatrix;
 }
 
-void mat::swapRow(int row01, int row02)
+void mat::swapRow(long double** matrix,int row01, int row02)
 {
 	long double * auxRow;
-	auxRow = this->matrix[row01];
-	this->matrix[row01] = this->matrix[row02];
-	this->matrix[row02] = auxRow;
+	auxRow = matrix[row01];
+	matrix[row01] = matrix[row02];
+	matrix[row02] = auxRow;
 }
 
 
