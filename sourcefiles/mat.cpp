@@ -219,14 +219,14 @@ int mat::mat_det(void)
 }
 void mat::mat_inv(void)
 {
-	int i,j,k;
+	int i, j, k;
 	long double t;
 	j = 0;
 	if (mat_det())
 	{
 		long double **temp = newAuxMatrixSamesize();
 		for (i = 0; i < N*M; i++)
-			temp[i]=matrix[i];
+			temp[i] = matrix[i];
 		inv = newAuxIdentityMatrix();
 		for (i = 0; i < N; i++)
 		{
@@ -234,24 +234,27 @@ void mat::mat_inv(void)
 			{
 				while (temp[i][i] == 0)
 				{
-					swapRow(temp,i, i + 1);
-					swapRow(temp,i + 1, N);
-					swapRow(inv, i, i + 1);
-					swapRow(inv, i + 1, N);
-					
+					if (i < N - 1)
+					{
+						swapRow(temp, i, i + 1);
+						swapRow(temp, i + 1, N-1);
+						swapRow(inv, i, i + 1);
+						swapRow(inv, i + 1, N-1);
+					}
+					i = 0;
 				}
 			}
 			for (j = 0, t = temp[i][i]; j < M; j++)
 			{
-				
-					inv[i][j] = inv[i][j] /t;
-					temp[i][j] = temp[i][j] /t;
+
+				inv[i][j] = inv[i][j] / t;
+				temp[i][j] = temp[i][j] / t;
 			}
-			if (i < N-1 )
+			if (i < N - 1)
 			{
 				for (k = i + 1; k < N; k++)
 				{
-					for (j = 0,t=temp[k][i]; j < M; j++)
+					for (j = 0, t = temp[k][i]; j < M; j++)
 					{
 
 						inv[k][j] = inv[k][j] - inv[i][j] * t;
@@ -260,18 +263,20 @@ void mat::mat_inv(void)
 				}
 			}
 		}
-		for (k = 3; k > 0; k--){
-			for (i = 3 - k,t=temp[N - 2 - i][k]; i < N - 1; i++)
+		for (k = N-1; k > 0; k--){
+			for (i = N-1 - k, t = temp[N - 2 - i][k]; i < N - 1; i++)
 			{
-				for (j = 0; j < N;j++)
-				inv[N - i - 2][j] = inv[N - 2 - i][j] - inv[k][j] * temp[N - 2 - i][k];
+				for (j = 0; j < N; j++)
+					inv[N - i - 2][j] = inv[N - 2 - i][j] - inv[k][j] * temp[N - 2 - i][k];
 				temp[N - i - 2][k] = temp[N - 2 - i][k] - temp[k][k] * temp[N - 2 - i][k];
-				
+
 			}
 		}
 
 	}
+	//print_thisMatrix(inv, N, N);
 }
+
 
 void mat::transpuestaCopyRowToColumn(long double** newMatrix, long double * rowToCopy, int rowNumber)
 {
