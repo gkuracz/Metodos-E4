@@ -6,7 +6,7 @@ class mat
 
 		long double** matrix; // Main Matrix varirable
 
-		mat(int, int);
+		mat(int, int);//allocates memory for a m by n matrix
 		mat(char*); // Constructor that recieved csv
 
 		//if string inserted is "identityMatrix" it will create the identity matrix, must be squared.
@@ -17,16 +17,16 @@ class mat
 		void print_mat_L(void); //Print LUDecomp, L matrix only if it exists.
 		void print_mat_U(void); //Print LUDecomp, U matrix only if it exists.
 		void print_thisMatrix(long double** thisMatrix, int M, int N); //Prints selected matrix
-
+		int mat_det(void);
 		
-		void mat::product(mat& A, mat& B);
+		void product(mat& A, mat& B);
 		
 		
 
 		//Verifies if matrix is squared
 		bool isMatrixSquared(void);
 
-		void swapRow(int row01, int row02); //Swaps the selected rows
+		void swapRow(long double**, int row01, int row02); //Swaps the selected rows
 
 		void transpuesta(void); //Transposes de current matrix and saves it.
 
@@ -35,11 +35,15 @@ class mat
 			long double** matrixL;
 			long double** matrixU;
 
+		void mat_inv(void);
+			long double** inv;
+
 			void setVariablesToNull(void)
 			{
 				matrixL = NULL;
 				matrixU = NULL;
 				matrix  = NULL;
+				inv		= NULL;
 			}
 
 private:
