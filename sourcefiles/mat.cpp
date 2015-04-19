@@ -370,20 +370,20 @@ void mat::createLUDecompMatrix(void)
 void mat::qr(void)
 {
 	int j, i,k;
-	Q = newAuxMatrixSamesize();
+	Q = new_mat(M, N);
 	long double** aux = newAuxMatrixSamesize();
-	R = new_mat(M, N); 
+	R = new_mat(N, N); 
 	match_mats(matrix,M,N,Q,M,N);
 	for (i = 0; i < N-1; i++)
 	{
 		R[i][i] = norm2ofvector(get_col(Q, i,M,N),M);
 
-		for (j = 0; j < N; j++)Q[j][i] = Q[j][i] / R[i][i];
+		for (j = 0; j < M; j++)Q[j][i] = Q[j][i] / R[i][i];
 		match_mats(Q, M, N, aux, M, N);
 		for (k = i+1; k < N; k++)
 		{
 
-			for (j = 0; j < N; j++)
+			for (j = 0; j < M; j++)
 			{
 
 				Q[j][k] = aux[j][k] - aux[j][i] * product(transpose_of_col(get_col(aux, k, M, N), M), get_col(aux, i, M, N), 1, N, M, 1)[0][0];
@@ -391,18 +391,16 @@ void mat::qr(void)
 			}
 
 			R[i][k] = product(transpose_of_col(get_col(Q, i, M, N), M), get_col(matrix, k, M, N), 1, N, M, 1)[0][0];
-
-
 		}
 	}
 
-	R[M-1][N-1]=norm2ofvector(get_col(Q, M-1, M, N), M);
+	R[N-1][N-1]=norm2ofvector(get_col(Q, N-1, M, N), M);
 	for (i = 0; i < M; i++)
-		Q[i][N-1] = Q[i][N-1] / R[M-1][N-1];
+		Q[i][N-1] = Q[i][N-1] / R[N-1][N-1];
 	printf("Q:\n");
 	print_thisMatrix(Q, M, N);
 	printf("R:\n");
-	print_thisMatrix(R,M,N);
+	print_thisMatrix(R,N,N);
 	
 }
 long double mat::norm2ofvector(long double** v,int L)
