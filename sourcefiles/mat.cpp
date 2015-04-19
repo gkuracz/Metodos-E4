@@ -2,6 +2,7 @@
 #include <iostream>
 #include"mat.h"
 #include"csv.h"
+#include<math.h>
 
 using namespace std;
 
@@ -151,22 +152,24 @@ void mat::print_thisMatrix(long double** thisMatrix, int M, int N)
 	}
 }
 
-void mat::product(mat& A, mat& B)
+long double** mat::product(long double** A, long double** B, int AM, int AN, int BM, int BN)
 {
 
 	int i, j, k;
 	long double a = 0;
-	if (A.M == B.N)
+	long double **p = new_mat(AM, BM);
+	if (AM == BN)
 	{
-		for (i = 0; i < A.M; i++)
-		for (j = 0; j < B.N; j++)
+		for (i = 0; i < AM; i++)
+		for (j = 0; j < BN; j++)
 		{
-			for (k = 0; k < B.M; k++)
-				a = a + A.matrix[i][k] * B.matrix[k][j];
-			this->matrix[i][j] = a;
+			for (k = 0; k < BM; k++)
+				a = a + A[i][k] * B[k][j];
+			p[i][j] = a;
 			a = 0;
 		}
 	}
+	return p;
 }
 
 
@@ -366,18 +369,58 @@ void mat::createLUDecompMatrix(void)
 
 void mat::qr(void)
 {
+	int j, i,k;
 	Q = newAuxMatrixSamesize();
+	long double** aux = newAuxMatrixSamesize();
+	R = new_mat(M, N); 
 	match_mats(matrix,M,N,Q,M,N);
-	long double ** Q1 = get_col(Q, 1, M, N);
-	print_thisMatrix(Q1, M, 1);
-	//print_thisMatrix(Q,M,N);
+	for (i = 0; i < N-1; i++)
+	{
+		R[i][i] = norm2ofvector(get_col(Q, i,M,N),M);
+
+		for (j = 0; j < N; j++)Q[j][i] = Q[j][i] / R[i][i];
+		match_mats(Q, M, N, aux, M, N);
+		for (k = i+1; k < N; k++)
+		{
+
+			for (j = 0; j < N; j++)
+			{
+
+				Q[j][k] = aux[j][k] - aux[j][i] * product(transpose_of_col(get_col(aux, k, M, N), M), get_col(aux, i, M, N), 1, N, M, 1)[0][0];
+
+			}
+
+			R[i][k] = product(transpose_of_col(get_col(Q, i, M, N), M), get_col(matrix, k, M, N), 1, N, M, 1)[0][0];
+
+
+		}
+	}
+
+	R[M-1][N-1]=norm2ofvector(get_col(Q, M-1, M, N), M);
+	for (i = 0; i < M; i++)
+		Q[i][N-1] = Q[i][N-1] / R[M-1][N-1];
+	printf("Q:\n");
+	print_thisMatrix(Q, M, N);
+	printf("R:\n");
+	print_thisMatrix(R,M,N);
+	
+}
+long double mat::norm2ofvector(long double** v,int L)
+//PASS AS COLUMN
+{
+	long double n = 0;
+	for (int i = 0; i < L; i++)
+	{
+		n = n + v[i][0] * v[i][0];
+	}
+	return sqrt(n);
 }
 
 void mat::match_mats(long double ** A, int AM, int AN, long double ** B, int BM, int BN)
 {
 	if ((AN == BN) && (AM == BM))
-	for (int i = 0; i < AM*AN; i++)
-		B[i] = A[i];
+		for (int i = 0; i < AM; i++)for (int j = 0; j < N;j++)
+		B[i][j] = A[i][j];
 }
 
 long double** mat::get_col(long double **A,int c,int M, int N)
@@ -400,3 +443,12 @@ long double ** mat::new_mat(int M, int N)
 		matrix[i][j] = 0;
 	return matrix;
 }
+long double ** mat::transpose_of_col(long double** col, int L)
+{
+	long double ** row = new_mat(1, L);
+	for (int i=0; i < L; i++)
+		row[0][i] = col[i][0];
+	return row;
+
+}
+
