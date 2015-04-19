@@ -12,34 +12,34 @@ mat::mat(int M, int N)
 	this->M = M;
 	this->N = N;
 	matrix = new long double*[M];
-	int i,j;
+	int i, j;
 	for (i = 0; i < M; i++)
 	{
 		matrix[i] = new long double[N];
 	}
-	for (i = 0; i < M;i++)
+	for (i = 0; i < M; i++)
 	for (j = 0; j < N; j++)
 		matrix[i][j] = 0;
 }
 mat::mat(char*name)
 {
-		setVariablesToNull();
-		int lM, lN;
-		csvSize(name, lM, lN);
-		this->M = lM;
-		this->N = lN;
-		matrix = new long double*[M];
-		int i;
-		for (i = 0; i < M; i++)
-		{
-			matrix[i] = new long double[N];
-		}
+	setVariablesToNull();
+	int lM, lN;
+	csvSize(name, lM, lN);
+	this->M = lM;
+	this->N = lN;
+	matrix = new long double*[M];
+	int i;
+	for (i = 0; i < M; i++)
+	{
+		matrix[i] = new long double[N];
+	}
 
-		csvRead(name, matrix, M, N);	
-	
+	csvRead(name, matrix, M, N);
+
 }
 
-mat::mat(char * specificMatrix,int M,int N)
+mat::mat(char * specificMatrix, int M, int N)
 {
 	this->M = M;
 	this->N = N;
@@ -52,8 +52,8 @@ mat::mat(char * specificMatrix,int M,int N)
 	}
 
 	for (i = 0; i < M; i++)
-		for (int j = 0; j < N; j++)
-			matrix[i][j] = 0;
+	for (int j = 0; j < N; j++)
+		matrix[i][j] = 0;
 
 	if (specificMatrix == "identityMatrix")
 	{
@@ -153,19 +153,19 @@ void mat::print_thisMatrix(long double** thisMatrix, int M, int N)
 
 void mat::product(mat& A, mat& B)
 {
-	
+
 	int i, j, k;
 	long double a = 0;
 	if (A.M == B.N)
 	{
-	for (i = 0; i < A.M;i++)
-	for (j = 0; j < B.N; j++)
-	{
-	for (k = 0; k < B.M; k++)
-	a = a + A.matrix[i][k] * B.matrix[k][j];
-	this->matrix[i][j] = a;
-	a = 0;
-	}
+		for (i = 0; i < A.M; i++)
+		for (j = 0; j < B.N; j++)
+		{
+			for (k = 0; k < B.M; k++)
+				a = a + A.matrix[i][k] * B.matrix[k][j];
+			this->matrix[i][j] = a;
+			a = 0;
+		}
 	}
 }
 
@@ -195,10 +195,10 @@ void mat::transpuesta(void)
 	transposeSetThisNewMatrix(newMatrix);
 }
 
-int mat::mat_det(void)
+long double mat::mat_det(void)
 {
 	int i;
-	long double dl=1, du=1;
+	long double dl = 1, du = 1;
 	if (M != N)
 	{
 		fprintf(stderr, "Error, the matrix must be square");
@@ -209,8 +209,8 @@ int mat::mat_det(void)
 	//print_mat_U();
 	for (i = 0; i < N; i++)
 	{
-		dl =dl*matrixL[i][i];
-		du =du*matrixU[i][i];
+		dl = dl*matrixL[i][i];
+		du = du*matrixU[i][i];
 	}
 	//fprintf(stderr, "DEBUG  det(A)=%f\n", dl*du);
 	return dl*du;
@@ -277,11 +277,10 @@ void mat::mat_inv(void)
 	//print_thisMatrix(inv, N, N);
 }
 
-
 void mat::transpuestaCopyRowToColumn(long double** newMatrix, long double * rowToCopy, int rowNumber)
 {
 	int i;
-	for (i = 0; i < this->N;i++)
+	for (i = 0; i < this->N; i++)
 	{
 		// Copy each element of the oldRow to the new matrix fixed column rows.
 		newMatrix[i][rowNumber] = rowToCopy[i];
@@ -305,7 +304,7 @@ void mat::transposeSetThisNewMatrix(long double** newMatrix)
 	this->matrix = newMatrix;
 }
 
-void mat::swapRow(long double** matrix,int row01, int row02)
+void mat::swapRow(long double** matrix, int row01, int row02)
 {
 	long double * auxRow;
 	auxRow = matrix[row01];
@@ -315,7 +314,7 @@ void mat::swapRow(long double** matrix,int row01, int row02)
 
 
 /*
-	Function that will create two matrix L and U necesary for the LUDecomposition algorithm.
+Function that will create two matrix L and U necesary for the LUDecomposition algorithm.
 */
 void mat::LUdecomposition(void)
 {
@@ -325,17 +324,17 @@ void mat::LUdecomposition(void)
 		{
 			createLUDecompMatrix(); // Craetes too necesary matrix for LUDecomposition, same size as the original.
 
-			int i, j,k;
+			int i, j, k;
 			double sum;
 
-			for (j = 0; j < this->N; j++) 
+			for (j = 0; j < this->N; j++)
 			{
 
 				// Solving upper matrix
-				for (i = 0; i <= j; i++) 
+				for (i = 0; i <= j; i++)
 				{
 					sum = 0.0;
-					for (k = 0; k < i; k++) 
+					for (k = 0; k < i; k++)
 					{
 						sum += matrixU[k][j] * matrixL[i][k];
 					}
@@ -363,4 +362,41 @@ void mat::createLUDecompMatrix(void)
 {
 	this->matrixL = newAuxIdentityMatrix(); //Create lower Matrix with identity diagonal
 	this->matrixU = newAuxMatrixSamesize(); //Create upperMatrix
+}
+
+void mat::qr(void)
+{
+	Q = newAuxMatrixSamesize();
+	match_mats(matrix,M,N,Q,M,N);
+	long double ** Q1 = get_col(Q, 1, M, N);
+	print_thisMatrix(Q1, M, 1);
+	//print_thisMatrix(Q,M,N);
+}
+
+void mat::match_mats(long double ** A, int AM, int AN, long double ** B, int BM, int BN)
+{
+	if ((AN == BN) && (AM == BM))
+	for (int i = 0; i < AM*AN; i++)
+		B[i] = A[i];
+}
+
+long double** mat::get_col(long double **A,int c,int M, int N)
+{
+	long double** col = new_mat(M, 1);
+	for (int i=0; i < M; i++)
+		col[i][0] = A[i][c];
+	return col;
+}
+long double ** mat::new_mat(int M, int N)
+{
+	long double ** matrix = new long double*[M];
+	int i, j;
+	for (i = 0; i < M; i++)
+	{
+		matrix[i] = new long double[N];
+	}
+	for (i = 0; i < M; i++)
+	for (j = 0; j < N; j++)
+		matrix[i][j] = 0;
+	return matrix;
 }
