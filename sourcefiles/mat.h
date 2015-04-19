@@ -19,7 +19,7 @@ public:
 	void print_thisMatrix(long double** thisMatrix, int M, int N); //Prints selected matrix
 	long double mat_det(void);
 
-	void product(mat& A, mat& B);
+	long double** mat::product(long double** A, long double** B, int AM, int AN, int BM, int BN);
 
 
 
@@ -42,6 +42,8 @@ public:
 	long double** Q;
 	long double** R;
 
+	long double ** transpose_of_col(long double** col, int L);
+
 	void setVariablesToNull(void)
 	{
 		matrixL = NULL;
@@ -59,7 +61,10 @@ private:
 	// Internal functions that are needed to transpose a matrix
 	void transpuestaCopyRowToColumn(long double** newMatrix, long double * rowToCopy, int rowNumber);
 	void transposeSetThisNewMatrix(long double** newMatrix);
-
+	
+	long double norm2ofvector(long double**,int L);
+	//PASS AS COLUMN
+	
 	void createLUDecompMatrix(void);
 
 	//Creates a matrix MxN, it will return the pointer to the matrix ** 
