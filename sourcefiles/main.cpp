@@ -58,7 +58,9 @@ int main(void)
 
 	mat A=mat("Example03-matA.csv");
 	mat b = mat("Example03-matB.csv");
-	double* matrixX = new double [A.N];
+	
+	double ** matrixX = new double * [1]; // we create the solution matrix where all the values will go.
+	matrixX[0] = new double [matrixA.N];
 
 	A.print_mat();
 	//A.qr();
