@@ -59,7 +59,7 @@ int csvSize(char* filename, int& M, int& N)
 	return (N<0?2:0);
 }
 
-int csvRead(char* filename, long double** mat, int M, int N)
+int csvRead(char* filename, double** mat, int M, int N)
 {
 	FILE* fp;
 	char str[CSV_MAX_LINE_SIZE];
@@ -82,9 +82,9 @@ int csvRead(char* filename, long double** mat, int M, int N)
 			for( l = 0; str[j] != CSV_SEPARATOR; l++, j++ )
 				str2[l] = str[j];				
 			str2[l] = 0x00;
-			mat[i][k] = (long double) atof(str2);
+			mat[i][k] = (double) atof(str2);
 		}
-		mat[i][k] = (long double) atof(&str[j]);
+		mat[i][k] = (double) atof(&str[j]);
 	}
 
 	fclose(fp);
@@ -92,7 +92,7 @@ int csvRead(char* filename, long double** mat, int M, int N)
 	return 0;
 }
 
-int csvWrite(char* filename, long double** mat, int M, int N)
+int csvWrite(char* filename, double** mat, int M, int N)
 {
 	FILE* fp;
 

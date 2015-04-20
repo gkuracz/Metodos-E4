@@ -11,7 +11,7 @@
 
 using namespace std;
 
-int fileSampleRead(char* filename, long double** mat, int M, int N)
+int fileSampleRead(char* filename, double** mat, int M, int N)
 {
 	FILE* fp;
 	
@@ -88,7 +88,7 @@ int fileSampleRead(char* filename, long double** mat, int M, int N)
 	return 0;
 }
 
-long double* createTimeVectorValues(long double * row, long double * auxiliarRow)
+double* createTimeVectorValues(double * row, double * auxiliarRow)
 {
 	//We will be creating the ( 1 t t^2 ) matrix, 1 row 3 columns
 	auxiliarRow[0] = 1;

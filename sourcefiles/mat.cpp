@@ -12,11 +12,11 @@ mat::mat(int M, int N)
 
 	this->M = M;
 	this->N = N;
-	matrix = new long double*[M];
+	matrix = new double*[M];
 	int i, j;
 	for (i = 0; i < M; i++)
 	{
-		matrix[i] = new long double[N];
+		matrix[i] = new double[N];
 	}
 	for (i = 0; i < M; i++)
 	for (j = 0; j < N; j++)
@@ -29,11 +29,11 @@ mat::mat(char*name)
 	csvSize(name, lM, lN);
 	this->M = lM;
 	this->N = lN;
-	matrix = new long double*[M];
+	matrix = new double*[M];
 	int i;
 	for (i = 0; i < M; i++)
 	{
-		matrix[i] = new long double[N];
+		matrix[i] = new double[N];
 	}
 
 	csvRead(name, matrix, M, N);
@@ -45,11 +45,11 @@ mat::mat(char * specificMatrix, int M, int N)
 	this->M = M;
 	this->N = N;
 
-	this->matrix = new long double*[M];
+	this->matrix = new double*[M];
 	int i;
 	for (i = 0; i < M; i++)
 	{
-		matrix[i] = new long double[N];
+		matrix[i] = new double[N];
 	}
 
 	for (i = 0; i < M; i++)
@@ -76,17 +76,17 @@ mat::~mat()
 	delete[] matrix;
 }
 
-long double ** mat::newAuxMatrixSamesize(void)
+double ** mat::newAuxMatrixSamesize(void)
 {
-	long double ** auxMatrix;
+	double ** auxMatrix;
 
 	this->M = M;
 	this->N = N;
-	auxMatrix = new long double*[this->M];
+	auxMatrix = new double*[this->M];
 	int i, j;
 	for (i = 0; i < M; i++)
 	{
-		auxMatrix[i] = new long double[this->N];
+		auxMatrix[i] = new double[this->N];
 	}
 	for (i = 0; i < this->M; i++)
 	for (j = 0; j < this->N; j++)
@@ -95,11 +95,11 @@ long double ** mat::newAuxMatrixSamesize(void)
 	return auxMatrix;
 }
 
-long double ** mat::newAuxIdentityMatrix(void)
+double ** mat::newAuxIdentityMatrix(void)
 {
 	if (this->M == this->N)
 	{
-		long double ** auxMatrix = newAuxMatrixSamesize();
+		double ** auxMatrix = newAuxMatrixSamesize();
 
 		for (int i = 0; i < this->N; i++)
 		{
@@ -139,7 +139,19 @@ void mat::print_mat_U(void)
 		print_thisMatrix(this->matrixU, this->M, this->N);
 }
 
-void mat::print_thisMatrix(long double** thisMatrix, int M, int N)
+void mat::print_mat_Q(void)
+{
+	if (this->Q != NULL)
+		print_thisMatrix(this->Q, this->M, this->N);
+}
+
+void mat::print_mat_R(void)
+{
+	if (this->R != NULL)
+		print_thisMatrix(this->R, this->M, this->N);
+}
+
+void mat::print_thisMatrix(double** thisMatrix, int M, int N)
 {
 	int i, j;
 	for (i = 0; i < M; i++)
@@ -152,12 +164,12 @@ void mat::print_thisMatrix(long double** thisMatrix, int M, int N)
 	}
 }
 
-long double** mat::product(long double** A, long double** B, int AM, int AN, int BM, int BN)
+double** mat::product(double** A, double** B, int AM, int AN, int BM, int BN)
 {
 
 	int i, j, k;
-	long double a = 0;
-	long double **p = new_mat(AM, BM);
+	double a = 0;
+	double **p = new_mat(AM, BM);
 	if (AM == BN)
 	{
 		for (i = 0; i < AM; i++)
@@ -177,19 +189,19 @@ void mat::transpuesta(void)
 {
 	// Assuming the matrix is already built, and has M and N defined.
 	// We create an auxiliar Matrix where we will transpose it.
-	long double ** newMatrix;
+	double ** newMatrix;
 
-	newMatrix = new long double*[this->N];
+	newMatrix = new double*[this->N];
 
 	for (int i = 0; i < this->N; i++)
 	{
-		newMatrix[i] = new long double[this->M];
+		newMatrix[i] = new double[this->M];
 	}
 
 	// We select each row and copy it on the newMatrix column.
 	for (int indexOldRow = 0; indexOldRow < this->M; indexOldRow++)
 	{
-		long double * auxRow;
+		double * auxRow;
 		auxRow = this->matrix[indexOldRow]; //We copy the entire row to an auxiliar.
 
 		transpuestaCopyRowToColumn(newMatrix, auxRow, indexOldRow); //We transpose the row to a column on the new matrix.
@@ -198,10 +210,10 @@ void mat::transpuesta(void)
 	transposeSetThisNewMatrix(newMatrix);
 }
 
-long double mat::mat_det(void)
+double mat::mat_det(void)
 {
 	int i;
-	long double dl = 1, du = 1;
+	double dl = 1, du = 1;
 	if (M != N)
 	{
 		fprintf(stderr, "Error, the matrix must be square");
@@ -223,11 +235,11 @@ long double mat::mat_det(void)
 void mat::mat_inv(void)
 {
 	int i, j, k;
-	long double t;
+	double t;
 	j = 0;
 	if (mat_det())
 	{
-		long double **temp = newAuxMatrixSamesize();
+		double **temp = newAuxMatrixSamesize();
 		for (i = 0; i < N*M; i++)
 			temp[i] = matrix[i];
 		inv = newAuxIdentityMatrix();
@@ -280,7 +292,7 @@ void mat::mat_inv(void)
 	//print_thisMatrix(inv, N, N);
 }
 
-void mat::transpuestaCopyRowToColumn(long double** newMatrix, long double * rowToCopy, int rowNumber)
+void mat::transpuestaCopyRowToColumn(double** newMatrix, double * rowToCopy, int rowNumber)
 {
 	int i;
 	for (i = 0; i < this->N; i++)
@@ -290,7 +302,7 @@ void mat::transpuestaCopyRowToColumn(long double** newMatrix, long double * rowT
 	}
 }
 
-void mat::transposeSetThisNewMatrix(long double** newMatrix)
+void mat::transposeSetThisNewMatrix(double** newMatrix)
 {
 
 	//First we delete the old matrix, including its elements.
@@ -307,9 +319,9 @@ void mat::transposeSetThisNewMatrix(long double** newMatrix)
 	this->matrix = newMatrix;
 }
 
-void mat::swapRow(long double** matrix, int row01, int row02)
+void mat::swapRow(double** matrix, int row01, int row02)
 {
-	long double * auxRow;
+	double * auxRow;
 	auxRow = matrix[row01];
 	matrix[row01] = matrix[row02];
 	matrix[row02] = auxRow;
@@ -371,15 +383,21 @@ void mat::qr(void)
 {
 	int j, i,k;
 	Q = new_mat(M, N);
-	long double** aux = newAuxMatrixSamesize();
+	double** aux = newAuxMatrixSamesize();
 	R = new_mat(N, N); 
 	match_mats(matrix,M,N,Q,M,N);
+
 	for (i = 0; i < N-1; i++)
 	{
 		R[i][i] = norm2ofvector(get_col(Q, i,M,N),M);
 
-		for (j = 0; j < M; j++)Q[j][i] = Q[j][i] / R[i][i];
+		for (j = 0; j < M; j++)
+		{
+			Q[j][i] = (Q[j][i] / R[i][i]);
+		}
+
 		match_mats(Q, M, N, aux, M, N);
+
 		for (k = i+1; k < N; k++)
 		{
 
@@ -403,10 +421,10 @@ void mat::qr(void)
 	print_thisMatrix(R,N,N);
 	
 }
-long double mat::norm2ofvector(long double** v,int L)
+double mat::norm2ofvector(double** v,int L)
 //PASS AS COLUMN
 {
-	long double n = 0;
+	double n = 0;
 	for (int i = 0; i < L; i++)
 	{
 		n = n + v[i][0] * v[i][0];
@@ -414,39 +432,158 @@ long double mat::norm2ofvector(long double** v,int L)
 	return sqrt(n);
 }
 
-void mat::match_mats(long double ** A, int AM, int AN, long double ** B, int BM, int BN)
+void mat::match_mats(double ** A, int AM, int AN, double ** B, int BM, int BN)
 {
 	if ((AN == BN) && (AM == BM))
-		for (int i = 0; i < AM; i++)for (int j = 0; j < N;j++)
-		B[i][j] = A[i][j];
+	{
+		for (int i = 0; i < AM; i++)
+		{
+			for (int j = 0; j < AN; j++)
+			{
+				B[i][j] = A[i][j];
+			}
+		}
+	}	
 }
 
-long double** mat::get_col(long double **A,int c,int M, int N)
+double** mat::get_col(double **A,int c,int M, int N)
 {
-	long double** col = new_mat(M, 1);
+	double** col = new_mat(M, 1);
 	for (int i=0; i < M; i++)
 		col[i][0] = A[i][c];
 	return col;
 }
-long double ** mat::new_mat(int M, int N)
+double ** mat::new_mat(int M, int N)
 {
-	long double ** matrix = new long double*[M];
+	double ** matrix = new double*[M];
 	int i, j;
 	for (i = 0; i < M; i++)
 	{
-		matrix[i] = new long double[N];
+		matrix[i] = new double[N];
 	}
 	for (i = 0; i < M; i++)
 	for (j = 0; j < N; j++)
 		matrix[i][j] = 0;
 	return matrix;
 }
-long double ** mat::transpose_of_col(long double** col, int L)
+double ** mat::transpose_of_col(double** col, int L)
 {
-	long double ** row = new_mat(1, L);
+	double ** row = new_mat(1, L);
 	for (int i=0; i < L; i++)
 		row[0][i] = col[i][0];
+
+	delete col;
 	return row;
 
 }
 
+void solveLeastSquares(double **matrixQ, double **matrixR, double **matrixB, double * matrixSolution, int M, int N)
+{
+	double *Y = new double [N];
+	int i, k;
+
+	cout << "Solving Least Squares, might take some time please wait..." << endl << endl;
+
+	//We will be solving the Rx = Y equation
+
+	//First we set all the values to zero, to avoid floating and random number errors.
+	for (k = 0; k<N; k++) 
+	{
+		Y[k] = 0;
+		matrixSolution[k] = 0;
+	}
+
+	for (k = 0; k < N; k++)
+	{
+		for (i = 0; i < M; i++)
+		{
+			// By Multiplying  Q*B we will get (Q^T)*b
+			Y[k] += matrixQ[i][k] * matrixB[i][0];
+		}	
+	}
+
+	for (k = 1; k <= N; k++) //solve Rx=Y using back substitution
+	{
+		matrixSolution[N - k] += Y[N - k];
+		for (i = N - 1; i >= 0; i--)
+		{
+			if (i > (N - k))
+			{
+				matrixSolution[N - k] -= matrixSolution[i] * matrixR[N - k][i];
+			}		
+		}
+		matrixSolution[N - k] /= matrixR[N - k][N - k];
+		cout << "Solution X " << N - k + 1 << "= " << matrixSolution[N - k] << endl;
+	}
+
+	delete Y;
+}
+
+double** createTimeVectorMatrix(double ** matrixA, double ** timeVector, int totalRows)
+{
+	// We will be creating the ( 1 t t^2 ) matrix
+	// in which it will be the A matrix in the Ax = Y equation
+	int i;
+
+	cout << "Creating time vector, ( 1 t  t^2  ) please wait..." << endl << endl;
+
+	for (i = 0; i < totalRows; i++)
+	{
+		matrixA[i][0] = 1;
+		matrixA[i][1] = timeVector[i][0];
+		matrixA[i][2] = timeVector[i][0] * timeVector[i][0];
+	}
+
+	cout << "Done!" << endl << endl;
+	return matrixA;
+}
+
+double ** standarizationOfTimeValues(double ** tMatrix, int totalRows)
+{
+	double meanNumber = 0;
+	double totalSum = 0;
+	int i;
+
+	cout << "Standarizing time vector please wait..." << endl << endl;
+
+	for (i = 0; i < totalRows; i++)
+		totalSum += tMatrix[i][0];
+
+	meanNumber = (totalSum / totalRows);
+
+	cout << "The mean number: " << meanNumber << endl;
+
+	//We obtain the Standard Deviation
+	for (i = 0, totalSum = 0; i < totalRows; i++)
+	{
+		totalSum += pow((tMatrix[i][0] - meanNumber), 2);
+		
+	}
+
+	totalSum = (totalSum / totalRows);
+	double standardDeviation = sqrt(totalSum);
+
+	cout << "The standarDev number: " << standardDeviation << endl;
+
+	for (i = 0; i < totalRows; i++)
+	{
+		tMatrix[i][0] -= meanNumber;
+		tMatrix[i][0] = (tMatrix[i][0] / standardDeviation);
+	}
+
+	cout << "Done!" << endl << endl;
+
+	return tMatrix;
+}
+
+double ** applyLogarithmToDataValues(double ** sMatrix, int totalRows)
+{
+	int i;
+
+	for (i = 0; i < totalRows; i++)
+	{
+		sMatrix[i][0] = log(sMatrix[i][0]);
+	}
+
+	return sMatrix;
+}
