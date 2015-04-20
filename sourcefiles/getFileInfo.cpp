@@ -36,7 +36,6 @@ int fileSampleRead(char* filename, double** mat, int M, int N)
 		if (charsToSkip < FILE_DATATITLESIZE)
 		{
 			charsToSkip++;
-			cout << c;
 		}
 		else
 		{

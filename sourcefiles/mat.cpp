@@ -76,6 +76,15 @@ mat::~mat()
 	delete[] matrix;
 }
 
+void mat::cleanMatrix(double **matrix, int M, int N)
+{
+	int i,j;
+
+	for (i = 0; i < M; i++)
+	for (j = 0; j < N; j++)
+		matrix[i][j] = 0;
+}
+
 double ** mat::newAuxMatrixSamesize(void)
 {
 	double ** auxMatrix;
@@ -477,12 +486,10 @@ double ** mat::transpose_of_col(double** col, int L)
 
 }
 
-void solveLeastSquares(double **matrixQ, double **matrixR, double **matrixB, double * matrixSolution, int M, int N)
+void solveLeastSquares(double **matrixQ, double **matrixR, double **matrixB, double ** matrixSolution, int M, int N)
 {
 	double *Y = new double [N];
 	int i, k;
-
-	cout << "Solving Least Squares, might take some time please wait..." << endl << endl;
 
 	//We will be solving the Rx = Y equation
 
@@ -490,7 +497,7 @@ void solveLeastSquares(double **matrixQ, double **matrixR, double **matrixB, dou
 	for (k = 0; k<N; k++) 
 	{
 		Y[k] = 0;
-		matrixSolution[k] = 0;
+		matrixSolution[0][k] = 0;
 	}
 
 	for (k = 0; k < N; k++)
@@ -504,16 +511,15 @@ void solveLeastSquares(double **matrixQ, double **matrixR, double **matrixB, dou
 
 	for (k = 1; k <= N; k++) //solve Rx=Y using back substitution
 	{
-		matrixSolution[N - k] += Y[N - k];
+		matrixSolution[0][N - k] += Y[N - k];
 		for (i = N - 1; i >= 0; i--)
 		{
 			if (i > (N - k))
 			{
-				matrixSolution[N - k] -= matrixSolution[i] * matrixR[N - k][i];
+				matrixSolution[0][N - k] -= matrixSolution[0][i] * matrixR[N - k][i];
 			}		
 		}
-		matrixSolution[N - k] /= matrixR[N - k][N - k];
-		cout << "Solution X " << N - k + 1 << "= " << matrixSolution[N - k] << endl;
+		matrixSolution[0][N - k] /= matrixR[N - k][N - k];
 	}
 
 	delete Y;
@@ -525,8 +531,6 @@ double** createTimeVectorMatrix(double ** matrixA, double ** timeVector, int tot
 	// in which it will be the A matrix in the Ax = Y equation
 	int i;
 
-	cout << "Creating time vector, ( 1 t  t^2  ) please wait..." << endl << endl;
-
 	for (i = 0; i < totalRows; i++)
 	{
 		matrixA[i][0] = 1;
@@ -534,7 +538,6 @@ double** createTimeVectorMatrix(double ** matrixA, double ** timeVector, int tot
 		matrixA[i][2] = timeVector[i][0] * timeVector[i][0];
 	}
 
-	cout << "Done!" << endl << endl;
 	return matrixA;
 }
 
@@ -544,14 +547,10 @@ double ** standarizationOfTimeValues(double ** tMatrix, int totalRows)
 	double totalSum = 0;
 	int i;
 
-	cout << "Standarizing time vector please wait..." << endl << endl;
-
 	for (i = 0; i < totalRows; i++)
 		totalSum += tMatrix[i][0];
 
 	meanNumber = (totalSum / totalRows);
-
-	cout << "The mean number: " << meanNumber << endl;
 
 	//We obtain the Standard Deviation
 	for (i = 0, totalSum = 0; i < totalRows; i++)
@@ -563,15 +562,11 @@ double ** standarizationOfTimeValues(double ** tMatrix, int totalRows)
 	totalSum = (totalSum / totalRows);
 	double standardDeviation = sqrt(totalSum);
 
-	cout << "The standarDev number: " << standardDeviation << endl;
-
 	for (i = 0; i < totalRows; i++)
 	{
 		tMatrix[i][0] -= meanNumber;
 		tMatrix[i][0] = (tMatrix[i][0] / standardDeviation);
 	}
-
-	cout << "Done!" << endl << endl;
 
 	return tMatrix;
 }
@@ -586,4 +581,39 @@ double ** applyLogarithmToDataValues(double ** sMatrix, int totalRows)
 	}
 
 	return sMatrix;
+}
+
+
+void mat::QRDecomposition(void) //using modified Gram-Schmidt
+{
+	int i, j, k;
+	long double norm;
+
+	//We create the QR matrixes where we will be saving all there data
+	Q = new_mat(M, N);
+	R = new_mat(N, N);
+
+	cleanMatrix(R, N, N); //We clean R and set it to Zero.
+
+	for (k = 0; k<N; k++) // for k= 1->n
+	{
+		//REPLACE THIS WITH THE NORMALIZE FUNCTION
+		for (i = 0, norm = 0; i<M; i++) // R(k,k)= norm 2 of A(1:m,k)
+			norm += pow(matrix[i][k], 2);
+		R[k][k] = sqrt(norm);
+
+		for (i = 0; i<M; i++)
+			Q[i][k] = matrix[i][k] / R[k][k];
+		//Q(1:m,k)=A(1:m,k)/R(k,k)
+
+		for (j = k + 1; j<N; j++) //for j=k+1->n
+		{
+			for (i = 0; i<M; i++)
+				R[k][j] += (Q[i][k] * matrix[i][j]);
+			//R(k,j)=Q(1:m,k)R(k,j)
+			for (i = 0; i<M; i++)
+				matrix[i][j] -= (Q[i][k] * R[k][j]);
+			//A(1:m,j)=A(1:m,j)-Q(1:m,k)R(k,j)
+		}
+	}
 }

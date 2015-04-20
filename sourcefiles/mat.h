@@ -77,6 +77,11 @@ public:
 
 	double** get_col(double **,int col,int M,int N);
 	double ** new_mat(int M, int N);
+
+
+	void cleanMatrix(double **matrix, int M, int N);
+
+	void QRDecomposition(void);
 private:
 
 
@@ -99,9 +104,9 @@ private:
 
 };
 
-void solveLeastSquares(double **matrixQ, double **matrixR, double **matrixB, double * matrixSolution, int M, int N);
+void solveLeastSquares(double **matrixQ, double **matrixR, double **matrixB, double ** matrixSolution, int M, int N);
 
-double ** createTimeVectorMatrix(double ** matrixA, double ** timeVector, int totalRows);
+double** createTimeVectorMatrix(double ** matrixA, double ** timeVector, int totalRows);
 
 double ** standarizationOfTimeValues(double ** tMatrix, int totalRows);
 

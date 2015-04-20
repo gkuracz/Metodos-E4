@@ -27,14 +27,16 @@ int main(void)
 	delete tMatrix; // Since we used this matrix, we don't need it anymore.
 
 	//matrixA.print_mat();
-	cout << "Creating time QR please wait..." << endl << endl;
-	matrixA.qr(); // we obtain the QR function to solveLeastSquares
-	cout << "Done!" << endl << endl;
+	//matrixA.qr();
+	matrixA.QRDecomposition(); // we obtain the QR function to solveLeastSquares
 
-	double * matrixX = new double[1]; // we create the solution matrix where all the values will go.
-	cout << "Solving leastSquares, please wait..." << endl << endl;
-	solveLeastSquares(matrixA.Q, matrixA.R, sMatrix, matrixX, timeRatio.M, 1);
-	cout << "Done!" << endl << endl;
+
+	double ** matrixX = new double * [1]; // we create the solution matrix where all the values will go.
+	matrixX[0] = new double [matrixA.N];
+
+	solveLeastSquares(matrixA.Q, matrixA.R, sMatrix, matrixX, timeRatio.M, matrixA.N);
+
+	matrixA.print_thisMatrix(matrixX, 1, 3);
 
 	//timeRatio.print_thisMatrix(tMatrix, timeRatio.M, 1);
 	//timeRatio.print_thisMatrix(sMatrix, timeRatio.M, 1);
@@ -59,13 +61,14 @@ int main(void)
 	double* matrixX = new double [A.N];
 
 	A.print_mat();
-	A.qr();
+	//A.qr();
+	A.QRDecomposition();
 
 	solveLeastSquares(A.Q, A.R, b.matrix, matrixX, A.M, A.N);
 
 	delete matrixX;
 
-	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%8/
 	
 
 	/*
