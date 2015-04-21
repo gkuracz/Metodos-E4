@@ -6,4 +6,4 @@ enum typeOfData {DATE=0, VALUE};
 
 int fileSampleSize(char* filename, int& M, int& N);
 int fileSampleRead(char* filename, long double** mat, int M, int N);
-int fileSampleWrite(char* 
+int fileSampleWrite(char* filename, long double** mat, int M, int N);
