@@ -22,6 +22,7 @@ public:
 	void print_mat_R(void); //Print QRDecomp, R matrix only if it exists.
 	void print_thisMatrix(double** thisMatrix, int M, int N); //Prints selected matrix
 	double mat_det(void);
+	
 
 	double** mat::product(double** A, double** B, int AM, int AN, int BM, int BN);
 
@@ -77,8 +78,9 @@ public:
 
 	double** get_col(double **,int col,int M,int N);
 	double ** new_mat(int M, int N);
-
-
+	void f_get_col(double **A, int c, int M, int N, double **col);
+	void f_get_trans(double **A, int M, int N, double **col);
+	void kill(double**, int, int);
 	void cleanMatrix(double **matrix, int M, int N);
 
 	void QRDecomposition(void);
