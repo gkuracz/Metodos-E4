@@ -392,7 +392,10 @@ void mat::qr(void)
 {
 	int j, i,k;
 	Q = new_mat(M, N);
-	double** aux = newAuxMatrixSamesize();
+	double ** T = new_mat(1, M);
+	double ** C = new_mat(M, N);
+	double** aux = new_mat(M, N);
+	double** P = new_mat(1,1);// AuxMatrixSamesize();
 	R = new_mat(N, N); 
 	match_mats(matrix,M,N,Q,M,N);
 
@@ -411,10 +414,13 @@ void mat::qr(void)
 		{
 
 			for (j = 0; j < M; j++)
-			{
-
-				Q[j][k] = aux[j][k] - aux[j][i] * product(transpose_of_col(get_col(aux, k, M, N), M), get_col(aux, i, M, N), 1, N, M, 1)[0][0];
-
+			{				
+				f_get_col(aux, k, M, N, C);
+				f_get_trans(C, M, N, T);
+				f_get_col(aux, i, M, N, C);
+				P = product(T, C, 1, N, M, 1);
+				Q[j][k] = aux[j][k] - aux[j][i] * P[0][0];
+				kill(P, 1, 1);
 			}
 
 			R[i][k] = product(transpose_of_col(get_col(Q, i, M, N), M), get_col(matrix, k, M, N), 1, N, M, 1)[0][0];
@@ -430,6 +436,28 @@ void mat::qr(void)
 	print_thisMatrix(R,N,N);
 	
 }
+
+
+void mat::f_get_col(double **A, int c, int M, int N, double **col)
+{
+	for (int i = 0; i < M; i++)
+		col[i][0]=A[i][c];
+
+}
+
+void mat::f_get_trans(double **A, int M, int N, double **col)
+{
+	for (int i = 0; i < M; i++)
+		col[0][i] = A[i][0];
+
+}
+void mat::kill(double** A, int M, int N)
+{
+	for (int i = 0; i < M; ++i)
+		delete[] A[i];
+	delete[] A;
+}
+
 double mat::norm2ofvector(double** v,int L)
 //PASS AS COLUMN
 {
