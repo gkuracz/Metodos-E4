@@ -20,15 +20,15 @@ int main(int argc, char** argv)
 	}
 	else
 	{
-		string fileNameA = argv[1];
-		string fileNameB = argv[2];
-		string fileNameX = argv[3];
+		char* fileNameA = argv[1];
+		char* fileNameB = argv[2];
+		char* fileNameX = argv[3];
 
 		cout << "[DEBUG] nameA: " << fileNameA << endl;
 		cout << "[DEBUG] nameB: " << fileNameB << endl;
 		cout << "[DEBUG] nameX: " << fileNameX << endl<<endl;
 
-		mat timeRatio = mat(17610, 2); // we create the timeRatio, knowing the amount of lines beforehand
+		/*mat timeRatio = mat(17610, 2); // we create the timeRatio, knowing the amount of lines beforehand
 		fileSampleRead("spdc2693.txt", timeRatio.matrix, -1, -1); // we obtain all the data from the file
 
 		mat matrixA = mat(timeRatio.M, 3); //Since we think our polinomialis Ao + A1x + A2x^2 = Y we have a vector 1x3
@@ -46,8 +46,8 @@ int main(int argc, char** argv)
 		delete tMatrix; // Since we used this matrix, we don't need it anymore.
 
 		//matrixA.print_mat();
-		//matrixA.qr();
-		matrixA.QRDecomposition(); // we obtain the QR function to solveLeastSquares
+		matrixA.qr();
+		//matrixA.QRDecomposition(); // we obtain the QR function to solveLeastSquares
 
 
 		long double ** matrixX = new long double *[1]; // we create the solution matrix where all the values will go.
@@ -71,27 +71,32 @@ int main(int argc, char** argv)
 		//.print_thisMatrix(sMatrix, timeRatio.M, 1);
 		//timeRatio.print_mat();
 		//timeRatio.qr();
-
-		/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		*/
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		//	This is a working example of solving least squares with the QR decomposition algorithm method.
 		//  - There is a set of examples that will work with this algorithm, such as Example01/02/03 on the csv files.
 		//  - It will use the QRDecomposition algorithm.
 
-		mat A=mat("Example03-matA.csv");
-		mat b = mat("Example03-matB.csv");
+		mat A= mat(fileNameA);
+
+		mat b = mat(fileNameB);
 
 		long double ** matrixX = new long double * [1]; // we create the solution matrix where all the values will go.
-		matrixX[0] = new long double [matrixA.N];
-
+		matrixX[0] = new long double [A.N];
+		printf("A:\n");
 		A.print_mat();
-		//A.qr();
-		A.QRDecomposition();
+		printf("b:\n");
+		b.print_mat();
+		A.qr();
+		//A.QRDecomposition();
 
 		solveLeastSquares(A.Q, A.R, b.matrix, matrixX, A.M, A.N);
-
+		printf("X:\n");
+		A.print_thisMatrix(matrixX,1,A.N);
+		csvWrite(fileNameX, matrixX, 1, A.N);
 		delete matrixX;
-
-		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%8/
+		
+		//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%8/
 
 
 		/*
@@ -124,6 +129,5 @@ int main(int argc, char** argv)
 
 	}
 
-	getchar();
 }
 
