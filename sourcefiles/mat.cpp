@@ -157,7 +157,7 @@ void mat::print_mat_Q(void)
 void mat::print_mat_R(void)
 {
 	if (this->R != NULL)
-		print_thisMatrix(this->R, this->M, this->N);
+		print_thisMatrix(this->R, this->N, this->N);
 }
 
 void mat::print_thisMatrix(double** thisMatrix, int M, int N)
@@ -167,7 +167,7 @@ void mat::print_thisMatrix(double** thisMatrix, int M, int N)
 	{
 		for (j = 0; j < N; j++)
 		{
-			fprintf(stderr, "%f\t", thisMatrix[i][j]);
+			fprintf(stderr, "%.10f\t", thisMatrix[i][j]);
 		}
 		fprintf(stderr, "\n");
 	}
