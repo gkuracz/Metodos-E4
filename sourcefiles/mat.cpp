@@ -412,17 +412,15 @@ void mat::qr(void)
 
 		for (k = i+1; k < N; k++)
 		{
-
+			f_get_col(aux, k, M, N, C);
+			f_get_trans(C, M, N, T);
+			f_get_col(aux, i, M, N, C);
+			P = product(T, C, 1, N, M, 1);
 			for (j = 0; j < M; j++)
 			{				
-				f_get_col(aux, k, M, N, C);
-				f_get_trans(C, M, N, T);
-				f_get_col(aux, i, M, N, C);
-				P = product(T, C, 1, N, M, 1);
 				Q[j][k] = aux[j][k] - aux[j][i] * P[0][0];
-				kill(P, 1, 1);
 			}
-
+			kill(P, 1, 1);
 			R[i][k] = product(transpose_of_col(get_col(Q, i, M, N), M), get_col(matrix, k, M, N), 1, N, M, 1)[0][0];
 		}
 	}
