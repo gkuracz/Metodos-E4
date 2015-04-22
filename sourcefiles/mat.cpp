@@ -7,6 +7,7 @@
 using namespace std;
 
 mat::mat(int M, int N)
+// creates a class mat with a matrix of M by N
 {
 	setVariablesToNull();
 
@@ -23,6 +24,7 @@ mat::mat(int M, int N)
 		matrix[i][j] = 0;
 }
 mat::mat(char*name)
+//creates a class mat with the matrix from a .csv file
 {
 	setVariablesToNull();
 	int lM, lN;
@@ -70,6 +72,7 @@ mat::mat(char * specificMatrix, int M, int N)
 }
 
 mat::~mat()
+//frees the memory of the matrix of the class
 {
 	for (int i = 0; i < M; ++i)
 		delete[] matrix[i];
@@ -221,6 +224,7 @@ void mat::transpuesta(void)
 
 long double mat::mat_det(void)
 {
+	//having the LU decomposition the determinant becomes the product of the diagonals of the LU decomposition matrixes
 	int i;
 	long double dl = 1, du = 1;
 	if (M != N)
@@ -242,13 +246,14 @@ long double mat::mat_det(void)
 
 }
 void mat::mat_inv(void)
+//creates the inverse of a matrix using gauss jordan elimination
 {
 	int i, j, k;
 	long double t;
 	j = 0;
 	if (mat_det())
 	{
-		long double **temp = newAuxMatrixSamesize();
+		long double **temp = newAuxMatrixSamesize();	//creates a new matrix so that the original matrix remains equal
 		for (i = 0; i < N*M; i++)
 			temp[i] = matrix[i];
 		inv = newAuxIdentityMatrix();
@@ -260,17 +265,19 @@ void mat::mat_inv(void)
 				{
 					if (i < N - 1)
 					{
+						//this part swaps the rows of the matrix so that it dosen't divides by 0
 						swapRow(temp, i, i + 1);
 						swapRow(temp, i + 1, N-1);
 						swapRow(inv, i, i + 1);
 						swapRow(inv, i + 1, N-1);
 					}
+					//this is to start again if you have to swap rows so that every element in the diagonal is 1
 					i = 0;
 				}
 			}
 			for (j = 0, t = temp[i][i]; j < M; j++)
 			{
-
+				//divides the elements of the diagonal so they are equal to 1
 				inv[i][j] = inv[i][j] / t;
 				temp[i][j] = temp[i][j] / t;
 			}
@@ -280,7 +287,7 @@ void mat::mat_inv(void)
 				{
 					for (j = 0, t = temp[k][i]; j < M; j++)
 					{
-
+						//makes 0 everything under the diagonal
 						inv[k][j] = inv[k][j] - inv[i][j] * t;
 						temp[k][j] = temp[k][j] - temp[i][j] * t;
 					}
@@ -290,7 +297,7 @@ void mat::mat_inv(void)
 		for (k = N-1; k > 0; k--){
 			for (i = N-1 - k, t = temp[N - 2 - i][k]; i < N - 1; i++)
 			{
-				for (j = 0; j < N; j++)
+				for (j = 0; j < N; j++)//makes 0 everythin over the diagonal
 					inv[N - i - 2][j] = inv[N - 2 - i][j] - inv[k][j] * temp[N - 2 - i][k];
 				temp[N - i - 2][k] = temp[N - 2 - i][k] - temp[k][k] * temp[N - 2 - i][k];
 
@@ -389,6 +396,7 @@ void mat::createLUDecompMatrix(void)
 }
 
 void mat::qr(void)
+//this uses the Gramschmdit
 {
 	int j, i,k;
 	Q = new_mat(M, N);
@@ -409,15 +417,19 @@ void mat::qr(void)
 		}
 
 		match_mats(Q, M, N, aux, M, N);
+		//match an auxiliar matrix to Q because the values of Q change during the next for
+		//the values of Q change and this needs to have the original values of Q
 
 		for (k = i+1; k < N; k++)
 		{
+			//this function were create for this because the existing transpose and get_column were too slow
 			f_get_col(aux, k, M, N, C);
 			f_get_trans(C, M, N, T);
 			f_get_col(aux, i, M, N, C);
 			P = product(T, C, 1, N, M, 1);
 			for (j = 0; j < M; j++)
-			{				
+			{			
+				//this substracts the proyection of the normalized vector
 				Q[j][k] = aux[j][k] - aux[j][i] * P[0][0];
 			}
 			kill(P, 1, 1);
